@@ -1,0 +1,83 @@
+version: "3.8"
+services:
+  redis:
+    image: redis:6.2.2
+    container_name: redis-server
+    restart: unless-stopped # 设置容器自启模式
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - 6379:6379
+    volumes:
+      - ./data/redis/data:/data
+      - ./conf/redis/redis.conf:/usr/local/etc/redis/redis.conf
+
+  mysql:
+    hostname: mysql
+    image: mysql:5.7.26
+    container_name: mysql-server # 指定容器名称，如果不设置此参数，则由系统自动生成
+    restart: unless-stopped # 设置容器自启模式
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci # 设置utf8字符集
+    environment:
+      - TZ=Asia/Shanghai # 设置容器时区与宿主机保持一致
+      - MYSQL_ROOT_PASSWORD=123456 # 设置root密码
+    volumes:
+       - /etc/localtime:/etc/localtime:ro # 设置容器时区与宿主机保持一致
+       - ./data/mysql/data:/var/lib/mysql/data # 映射数据库保存目录到宿主机，防止数据丢失
+       - ./conf/mysql/my.cnf:/etc/mysql/my.cnf # 映射数据库配置文件
+    ports:
+        - "3306:3306"
+
+  zookeeper:
+    image: zookeeper:3.4
+    restart: always
+    container_name: zookeeper-server
+    volumes:
+      - ./conf/zookeeper/zoo.cfg:/conf/zoo.cfg
+      - ./data/zookeeper/data:/zk_data
+      - ./data/zookeeper/logs:/zk_logs
+    ports: 
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:6.1.1
+    container_name: kafka-server
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://127.0.0.1:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  # elasticsearch:
+  #   container_name: elasticsearch-server
+  #   image: elasticsearch:6.7.0
+  #   restart: always
+  #   privileged: true
+  #   environment:
+  #     - discovery.type=single-node
+  #     - bootstrap.memory_lock=true
+  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  #   ulimits:
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
+  #   volumes:
+  #     - ./data/elasticsearch/data:/usr/share/elasticsearch/data
+  #     # - ./data/elasticsearch/logs:/usr/share/elasticsearch/logs
+  #   ports:
+  #     - 9200:9200
+  #     - 9300:9300
+
+  # kibana:
+  #   image: kibana:6.7.0
+  #   container_name: kibana-server
+  #   restart: always
+  #   environment:
+  #     ELASTICSEARCH_URL: http://127.0.0.1:9200
+  #   ports:
+  #     - 5601:5601
