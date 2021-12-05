@@ -52,6 +52,21 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  hbase:
+    image: harisekhon/hbase:latest
+    container_name: hbase
+    ports:
+      - 18080:8080
+      - 18085:8085 #可访问
+      - 9090:9090
+      - 9095:9095
+      - 16000:16000
+      - 16010:16010 #可访问
+      - 16201:16201 
+      - 16301:16301
+      - 2182:2181
+    volumes:
+      - ./data/hbase/data:/hbase-data
 
   # elasticsearch:
   #   container_name: elasticsearch-server
