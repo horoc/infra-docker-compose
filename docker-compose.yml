@@ -52,8 +52,13 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  # hbase-client need org.apache.hbase:hbase-client:1.3.3
+  # 如果要重制hbase，需要删除data的数据
+  # 注意：这里的对外zk端口是2182，已经相应的8080和8085都改成18080 18085
   hbase:
-    image: harisekhon/hbase:latest
+    image: harisekhon/hbase:1.3
+    hostname: cloud
     container_name: hbase
     ports:
       - 18080:8080
@@ -64,9 +69,28 @@ services:
       - 16010:16010 #可访问
       - 16201:16201 
       - 16301:16301
+      - 16020:16020
+      - 16030:16030
       - 2182:2181
     volumes:
       - ./data/hbase/data:/hbase-data
+
+  canal:
+    image: canal/canal-server:v1.1.4
+    container_name: canal
+    ports:
+      - 11111:11111
+    environment:
+      - canal.instance.mysql.slaveId=12
+      - canal.auto.scan=false
+      - canal.destinations=nly-v1
+      - canal.instance.master.address=192.168.1.129:3306
+      - canal.instance.dbUsername=root
+      - canal.instance.dbPassword=123456
+      - canal.mq.topic=nly-v1
+      - canal.instance.filter.regex=esen_approval.apt_approval
+    volumes:
+      - ./data/canal/data:/admin/canal-server
 
   # elasticsearch:
   #   container_name: elasticsearch-server
