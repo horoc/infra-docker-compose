@@ -1,9 +1,9 @@
 # infra-docker-compose
-常用基础组件 一键启停脚本
+
+docker compose for backend common middleware 
 
 ## Command
 
-启动某服务
 
 ```shell
 
@@ -11,7 +11,6 @@ docker-compose up -d xxxxx
 
 ```
 
-重启某服务
 
 ```shell
 
@@ -19,7 +18,6 @@ docker-compose restart xxxxx
 
 ```
 
-关闭某服务
 
 ```shell
 
@@ -27,7 +25,6 @@ docker-compose kill xxxxx
 
 ```
 
-删除某停止的服务
 
 ```shell
 
@@ -35,8 +32,8 @@ docker-compose rm xxxxx
 
 ```
 
+all
 
-docker-compose --help你会看到如下这么多命令
 
 ```shell
 build               Build or rebuild services

@@ -3,7 +3,7 @@ services:
   redis:
     image: redis:6.2.2
     container_name: redis-server
-    restart: unless-stopped # 设置容器自启模式
+    restart: unless-stopped 
     command: redis-server /usr/local/etc/redis/redis.conf
     ports:
       - 6379:6379
@@ -14,16 +14,16 @@ services:
   mysql:
     hostname: mysql
     image: mysql:5.7.26
-    container_name: mysql-server # 指定容器名称，如果不设置此参数，则由系统自动生成
-    restart: unless-stopped # 设置容器自启模式
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci # 设置utf8字符集
+    container_name: mysql-server 
+    restart: unless-stopped 
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci 
     environment:
-      - TZ=Asia/Shanghai # 设置容器时区与宿主机保持一致
-      - MYSQL_ROOT_PASSWORD=123456 # 设置root密码
+      - TZ=Asia/Shanghai 
+      - MYSQL_ROOT_PASSWORD=123456 
     volumes:
-       - /etc/localtime:/etc/localtime:ro # 设置容器时区与宿主机保持一致
-       - ./data/mysql/data:/var/lib/mysql/data # 映射数据库保存目录到宿主机，防止数据丢失
-       - ./conf/mysql/my.cnf:/etc/mysql/my.cnf # 映射数据库配置文件
+       - /etc/localtime:/etc/localtime:ro 
+       - ./data/mysql/data:/var/lib/mysql/data 
+       - ./conf/mysql/my.cnf:/etc/mysql/my.cnf 
     ports:
         - "3306:3306"
 
@@ -41,6 +41,7 @@ services:
   kafka:
     image: confluentinc/cp-kafka:6.1.1
     container_name: kafka-server
+    restart: unless-stopped 
     depends_on:
       - zookeeper
     ports:
@@ -53,31 +54,30 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-  # hbase-client need org.apache.hbase:hbase-client:1.3.3
-  # 如果要重制hbase，需要删除data的数据
-  # 注意：这里的对外zk端口是2182，已经相应的8080和8085都改成18080 18085
   hbase:
     image: harisekhon/hbase:1.3
     hostname: cloud
     container_name: hbase
+    restart: unless-stopped 
     ports:
       - 18080:8080
-      - 18085:8085 #可访问
+      - 18085:8085 
       - 9090:9090
       - 9095:9095
       - 16000:16000
-      - 16010:16010 #可访问
+      - 16010:16010 
       - 16201:16201 
       - 16301:16301
       - 16020:16020
       - 16030:16030
-      - 2182:2181
+      - 2182:2181 # ! ! 
     volumes:
       - ./data/hbase/data:/hbase-data
 
   canal:
     image: canal/canal-server:v1.1.4
     container_name: canal
+    restart: unless-stopped 
     ports:
       - 11111:11111
     environment:
