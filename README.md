@@ -2,6 +2,12 @@
 
 docker compose file for some commonly used back-end components
 
+- [x] mysql
+- [x] redis
+- [x] zookeeper
+- [x] kafka
+- [x] hbase
+
 ## Command
 
 
