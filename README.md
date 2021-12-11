@@ -7,6 +7,7 @@ docker compose file for some commonly used back-end components
 - [x] zookeeper
 - [x] kafka
 - [x] hbase
+- [x] canal
 
 ## Command
 
