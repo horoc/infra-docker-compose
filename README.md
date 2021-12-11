@@ -1,6 +1,6 @@
 # infra-docker-compose
 
-docker compose for backend common middleware 
+docker compose file for some commonly used back-end components
 
 ## Command
 
