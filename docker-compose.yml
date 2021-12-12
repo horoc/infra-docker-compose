@@ -2,7 +2,7 @@ version: "3.8"
 services:
   redis:
     image: redis:6.2.2
-    container_name: redis-server
+    container_name: redis
     restart: unless-stopped 
     command: redis-server /usr/local/etc/redis/redis.conf
     ports:
@@ -14,7 +14,7 @@ services:
   mysql:
     hostname: mysql
     image: mysql:5.7.26
-    container_name: mysql-server 
+    container_name: mysql
     restart: unless-stopped 
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci 
     environment:
@@ -30,7 +30,7 @@ services:
   zookeeper:
     image: zookeeper:3.4
     restart: always
-    container_name: zookeeper-server
+    container_name: zookeeper
     volumes:
       - ./conf/zookeeper/zoo.cfg:/conf/zoo.cfg
       - ./data/zookeeper/data:/zk_data
@@ -40,7 +40,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:6.1.1
-    container_name: kafka-server
+    container_name: kafka
     restart: unless-stopped 
     depends_on:
       - zookeeper
@@ -78,17 +78,18 @@ services:
     image: canal/canal-server:v1.1.4
     container_name: canal
     restart: unless-stopped 
-    ports:
-      - 11111:11111
+    #    ports:
+    # - 11111:11111
+    network_mode: "host"
     environment:
-      - canal.instance.mysql.slaveId=12
       - canal.auto.scan=false
-      - canal.destinations=nly-v1
-      - canal.instance.master.address=192.168.1.129:3306
+      - canal.instance.master.address=127.0.0.1:3306
       - canal.instance.dbUsername=root
       - canal.instance.dbPassword=123456
-      - canal.mq.topic=nly-v1
-      - canal.instance.filter.regex=esen_approval.apt_approval
+      - canal.instance.filter.regex=.*\\..*
+      - canal.destinations=test
+      - canal.instance.connectionCharset=UTF-8
+      - canal.instance.tsdb.enable=true
     volumes:
       - ./data/canal/data:/admin/canal-server
 
