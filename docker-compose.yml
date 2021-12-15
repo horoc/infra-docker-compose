@@ -62,8 +62,8 @@ services:
     ports:
       - 18080:8080
       - 18085:8085 
-      - 9090:9090
-      - 9095:9095
+      - 19090:9090
+      - 19095:9095
       - 16000:16000
       - 16010:16010 
       - 16201:16201 
@@ -92,7 +92,27 @@ services:
       - canal.instance.tsdb.enable=true
     volumes:
       - ./data/canal/data:/admin/canal-server
+  
+  # port : 9090
+  prometheus: 
+    image: prom/prometheus:v2.31.1
+    container_name: prometheus
+    restart: unless-stopped
+    network_mode: "host"
+    volumes:
+      - ./conf/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
 
+  # port : 9100
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:v1.3.1
+    container_name: node_exporter
+    command:
+      - '--path.rootfs=/host'
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
   # elasticsearch:
   #   container_name: elasticsearch-server
   #   image: elasticsearch:6.7.0
