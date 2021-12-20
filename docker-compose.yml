@@ -114,11 +114,12 @@ services:
     volumes:
       - '/:/host:ro,rslave'
 
-  elasticsearch:
-    container_name: elasticsearch
+  es:
+    container_name: es 
     image: elasticsearch:6.7.0
     restart: always
-    privileged: true
+    #user: 'elasticsearch' 
+    #privileged: true
     environment:
       - discovery.type=single-node
       - bootstrap.memory_lock=true
@@ -127,9 +128,9 @@ services:
       memlock:
         soft: -1
         hard: -1
-    volumes:
-      - ./data/elasticsearch/data:/usr/share/elasticsearch/data
-      - ./data/elasticsearch/logs:/usr/share/elasticsearch/logs
+    #volumes:
+      #- ./data/elasticsearch/data:/usr/share/elasticsearch/data
+      #- ./data/elasticsearch/logs:/usr/share/elasticsearch/logs
     ports:
       - 9200:9200
       - 9300:9300
@@ -140,5 +141,7 @@ services:
     restart: always
     environment:
       ELASTICSEARCH_URL: http://127.0.0.1:9200
+      ELASTICSEARCH_HOSTS: '["http://127.0.0.1:9200"]'
     ports:
       - 5601:5601
+    network_mode: "host"
